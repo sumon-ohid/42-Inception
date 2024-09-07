@@ -1,0 +1,29 @@
+
+services:
+  wordpress:
+    image: wordpress
+    restart: always
+    ports:
+      - "8000:80"
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_USER: msumon
+      WORDPRESS_DB_PASSWORD: msumon
+      WORDPRESS_DB_NAME: mydata
+    volumes:
+      - wordpress:/var/www/html
+
+  db:
+    image: mariadb
+    restart: always
+    environment:
+      MYSQL_ROOT_PASSWORD: rootpassword
+      MYSQL_DATABASE: mydata
+      MYSQL_USER: msumon
+      MYSQL_PASSWORD: msumon
+    volumes:
+      - db_data:/var/lib/mysql
+
+volumes:
+  wordpress:
+  db_data:
