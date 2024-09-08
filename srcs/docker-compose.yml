@@ -22,17 +22,19 @@ services:
       context: ./requirements/wordpress
       dockerfile: Dockerfile
     ports:
-      - "9000:9000"
+      - "8000:80"
     volumes:
       - wordpress_files:/var/www/html
     restart: always
-    environment:
-      WORDPRESS_DB_HOST: mariadb:3306
-      WORDPRESS_DB_NAME: wordpress
-      WORDPRESS_DB_USER: wordpress
-      WORDPRESS_DB_PASSWORD: wordpresspassword
+    env_file:
+      - ./.env
+    # environment:
+    #   WORDPRESS_DB_HOST: mariadb:3306
+    #   WORDPRESS_DB_USER: wordpress
+    #   WORDPRESS_DB_PASSWORD: wordpresspassword
+    #   WORDPRESS_DB_NAME: wordpress
     expose:
-      - "9000"
+      - "80"
     links:
       - mariadb
     networks:
@@ -44,11 +46,13 @@ services:
       context: ./requirements/mariadb
       dockerfile: Dockerfile
     command: ["sleep", "3600"]
-    environment:
-      MYSQL_ROOT_PASSWORD: rootpassword
-      MYSQL_DATABASE: wordpress
-      MYSQL_USER: wordpress
-      MYSQL_PASSWORD: wordpresspassword
+    env_file:
+      - ./.env
+    # environment:
+    #   MYSQL_ROOT_PASSWORD: rootpassword
+    #   MYSQL_DATABASE: wordpress
+    #   MYSQL_USER: wordpress
+    #   MYSQL_PASSWORD: wordpresspassword
     volumes:
       - wordpress_db:/var/lib/mysql
     restart: always

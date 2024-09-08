@@ -27,7 +27,7 @@ COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 RUN chown -R www-data:www-data /var/www/html
 
 # Expose port 9000 for PHP-FPM
-EXPOSE 9000
+EXPOSE 8000
 
 # Start PHP-FPM
 CMD ["php-fpm7.4", "-F"]
