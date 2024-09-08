@@ -21,7 +21,7 @@ RUN curl -O https://wordpress.org/latest.tar.gz \
     && rm -rf wordpress latest.tar.gz
 
 # Copy PHP-FPM configuration
-COPY www.conf /etc/php/7.4/fpm/pool.d/www.conf
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
 
 # Set ownership and permissions
 RUN chown -R www-data:www-data /var/www/html
