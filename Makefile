@@ -16,12 +16,7 @@ restart:
 	docker-compose -f srcs/docker-compose.yml restart nginx wordpress mariadb
 
 network_check:
-	docker network inspect srcs_mynetwork
-
-remove_images:
-	# docker stop $(docker ps -q)
-	# docker rm $(docker ps -a -q)
-	docker rmi -f $$(docker images -q)
+	docker network inspect bridge
 
 re: down build up
 

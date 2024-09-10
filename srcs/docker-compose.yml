@@ -1,68 +1,61 @@
 
 services:
-  nginx:
-    container_name: nginx
-    build:
-      context: ./requirements/nginx
-      dockerfile: Dockerfile
-    ports:
-      - "443:443"
+  mariadb:
+    build: ./requirements/mariadb
+    image: mariadb
+    container_name: mariadb
     volumes:
-      - wordpress_files:/var/www/html
-      - ./requirements/nginx/ssl:/etc/ssl/certs
-    depends_on:
-      - wordpress
-    restart: always
+      - mdb:/var/lib/mysql
+    expose:
+      - "3306"
+    env_file:
+      - .env
     networks:
-      - internal
+      - inception_net
+    restart: on-failure
 
   wordpress:
+    build: ./requirements/wordpress
+    image: wordpress
     container_name: wordpress
-    build:
-      context: ./requirements/wordpress
-      dockerfile: Dockerfile
-    ports:
-      - "8000:80"
     volumes:
-      - wordpress_files:/var/www/html
-    restart: always
-    env_file:
-      - ./.env
-    # environment:
-    #   WORDPRESS_DB_HOST: mariadb:3306
-    #   WORDPRESS_DB_USER: wordpress
-    #   WORDPRESS_DB_PASSWORD: wordpresspassword
-    #   WORDPRESS_DB_NAME: wordpress
-    expose:
-      - "80"
-    links:
+      - wp:/var/www/html
+    depends_on:
       - mariadb
-    networks:
-      - internal
-
-  mariadb:
-    container_name: mariadb
-    build:
-      context: ./requirements/mariadb
-      dockerfile: Dockerfile
-    command: ["sleep", "3600"]
     env_file:
-      - ./.env
-    # environment:
-    #   MYSQL_ROOT_PASSWORD: rootpassword
-    #   MYSQL_DATABASE: wordpress
-    #   MYSQL_USER: wordpress
-    #   MYSQL_PASSWORD: wordpresspassword
-    volumes:
-      - wordpress_db:/var/lib/mysql
-    restart: always
+      - .env
     networks:
-      - internal
+      - inception_net
+    expose:
+      - "9000"
+    restart: on-failure
+
+  nginx:
+    build: ./requirements/nginx
+    image: nginx
+    container_name: nginx
+    volumes:
+      - wp:/var/www/html
+    ports:
+      - 443:443
+    networks:
+      - inception_net
+    depends_on:
+      - wordpress
+    restart: on-failure
 
 volumes:
-  wordpress_db:
-  wordpress_files:
+  mdb:
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: ./data/mysql
+  wp:
+    driver_opts:
+      type: 'none'
+      o: bind
+      device: ./data/wordpress
 
 networks:
-  internal:
+  inception_net:
     driver: bridge

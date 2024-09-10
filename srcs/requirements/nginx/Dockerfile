@@ -1,19 +1,18 @@
-# Use Debian as the base image
 FROM debian:bullseye
 
-# Install NGINX and OpenSSL
-RUN apt-get update && apt-get install -y \
-    nginx \
-    curl \
-    openssl \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt update; \
+    apt install -y nginx openssl
 
-# Copy NGINX configuration and SSL certificates
-COPY conf/nginx.conf /etc/nginx/nginx.conf
-COPY ssl /etc/nginx/ssl
+RUN openssl req -x509 -nodes -days 365 -newkey rsa:2048 \ 
+    -keyout /etc/ssl/private/msumon.key \
+    -out /etc/ssl/certs/msumon.crt \
+    -subj="/C=AT/ST=Vienna/L=Vienna/O=42 School/OU=msumon/CN=msumon.42.fr"
 
-# Expose port 443 for HTTPS
-EXPOSE 443 
+COPY ./tools/certs.sh /tmp/certs.sh
 
-# Start NGINX
-CMD ["nginx", "-g", "daemon off;"]
+RUN chmod +x /tmp/certs.sh
+
+COPY ./conf/default /etc/nginx/sites-available/default
+
+
+ENTRYPOINT ["/tmp/certs.sh"]

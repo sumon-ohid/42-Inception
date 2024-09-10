@@ -1,20 +1,14 @@
-# Use a stable version of Debian as the base image
 FROM debian:bullseye
 
-# Install MariaDB
-RUN apt-get update && apt-get install -y \
-    mariadb-server \
-    mariadb-client \
-    && rm -rf /var/lib/apt/lists/*
+RUN apt-get update -y && \
+    apt-get install -y mariadb-server
 
-# Create necessary directories and set permissions
-RUN mkdir -p /var/lib/mysql && chown -R mysql:mysql /var/lib/mysql
+COPY ./tools/db_script.sh /tmp/db_script.sh
 
-# Copy configuration file
-COPY ./conf/my.cnf /etc/mysql/my.cnf
+RUN  chmod +x /tmp/db_script.sh
 
-# Expose the port MariaDB runs on
-EXPOSE 3306
+RUN sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf 
 
-# Start MariaDB
+ENTRYPOINT ["bash", "/tmp/db_script.sh"]
+
 CMD ["mysqld_safe"]

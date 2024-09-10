@@ -1,33 +1,36 @@
-# Use Debian as the base image
 FROM debian:bullseye
 
-# Install PHP-FPM and required PHP extensions
-RUN apt-get update && apt-get install -y \
+# Install necessary packages
+RUN apt-get update && apt-get upgrade -y && apt-get install -y \
     php-fpm \
-    php-mysqli \
-    php-gd \
-    php-xml \
-    php-intl \
-    php-curl \
+    php-mysql \
+    php-zip \
+    php-redis \
     curl \
-    unzip \
-    && rm -rf /var/lib/apt/lists/*
+    vim \
+    sendmail && \
+    sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+    mkdir -p /run/php
 
-# Set up WordPress
+# Set working directory
 WORKDIR /var/www/html
-RUN curl -O https://wordpress.org/latest.tar.gz \
-    && tar xzvf latest.tar.gz \
-    && cp -R wordpress/* . \
-    && rm -rf wordpress latest.tar.gz
 
-# Copy PHP-FPM configuration
-COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/www.conf
-
-# Set ownership and permissions
+# Change ownership of the working directory
 RUN chown -R www-data:www-data /var/www/html
 
-# Expose port 9000 for PHP-FPM
-EXPOSE 8000
+# Install WP-CLI
+RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
+    chmod +x wp-cli.phar && \
+    mv wp-cli.phar /usr/local/bin/wp
 
-# Start PHP-FPM
-CMD ["php-fpm7.4", "-F"]
+# Download WordPress core files
+RUN wp core download --allow-root
+
+# Copy the setup script
+COPY ./tools/wp_setup.sh /usr/local/bin/wp_setup.sh
+
+# Make the setup script executable
+RUN chmod +x /usr/local/bin/wp_setup.sh
+
+# Set the entrypoint to the setup script
+ENTRYPOINT ["wp_setup.sh"]
