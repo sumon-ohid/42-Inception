@@ -1,67 +1,51 @@
+version: '3.8'
 
 services:
-  mariadb:
-    container_name: mariadb
-    build:
-      context: ./requirements/mariadb
-    volumes:
-      - mariadb_data:/var/lib/mysql
-    restart: always
-    networks:
-      - inception42
-    environment:
-     - DB_NAME=${DB_NAME}
-     - DB_USER=${DB_USER}
-     - DB_PASSWORD=${DB_PASSWORD}
-     - DB_HOSTNAME=${DB_HOSTNAME}
-     - DB_ROOT_PASSWORD=${DB_ROOT_PASSWORD}
-     
   nginx:
-    container_name: nginx
     build:
       context: ./requirements/nginx
+      dockerfile: Dockerfile
     ports:
+      - "80:80"
       - "443:443"
+    volumes:
+      - ./data/nginx:/etc/nginx
+      - ./data/ssl:/etc/ssl
     restart: always
     networks:
-      - inception42
-  
+      - webnet
+
   wordpress:
-    container_name: wordpress
     build:
       context: ./requirements/wordpress
+      dockerfile: Dockerfile
     volumes:
-      - wp_data:/var/www/html
-    restart: always
+      - wordpress_data:/var/www/html
+    networks:
+      - webnet
     depends_on:
       - mariadb
-    networks:
-      - inception42
-    environment:
-     - SITE_TITLE=${SITE_TITLE}
-     - DOMAIN_NAME=${DOMAIN_NAME}
-     - WP_ADMIN=${WP_ADMIN}
-     - WP_ADMIN_PASSWORD=${WP_ADMIN_PASSWORD}
-     - WP_ADMIN_EMAIL=${WP_ADMIN_EMAIL}
-     - WP_USER=${WP_USER}
-     - WP_USER_EMAIL=${WP_USER_EMAIL}
-     - WP_USER_PASSWORD=${WP_USER_PASSWORD}
+    restart: always
 
+  mariadb:
+    build:
+      context: ./requirements/mariadb
+      dockerfile: Dockerfile
+    environment:
+      MYSQL_ROOT_PASSWORD: ${DB_ROOT_PASSWORD}
+      MYSQL_DATABASE: ${DB_NAME}
+      MYSQL_USER: ${DB_USER}
+      MYSQL_PASSWORD: ${DB_PASSWORD}
+    volumes:
+      - mariadb_data:/var/lib/mysql
+    networks:
+      - webnet
+    restart: always
 
 volumes:
-  wp_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/msumon/data/wordpress
-      o: bind
+  wordpress_data:
   mariadb_data:
-    driver: local
-    driver_opts:
-      type: none
-      device: /home/msumon/data/mysql
-      o: bind
 
 networks:
-  inception42:
+  webnet:
     driver: bridge
