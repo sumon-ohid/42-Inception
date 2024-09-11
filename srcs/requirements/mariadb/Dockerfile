@@ -1,14 +1,25 @@
 FROM debian:bullseye
 
-RUN apt-get update -y && \
-    apt-get install -y mariadb-server
+RUN apt-get update && apt-get install -y \
+    nano \    
+    mariadb-server \
+    mariadb-client \
+    && rm -rf /var/lib/apt/lists/*
 
-COPY ./tools/db_script.sh /tmp/db_script.sh
+RUN mkdir -p /var/run/mysqld && \
+    mkdir -p /var/lib/mysqld && \
+    chown -R mysql:mysql /var/run/mysqld && \
+    chown -R mysql:mysql /var/lib/mysqld && \
+    chmod 777 /var/run/mysqld
 
-RUN  chmod +x /tmp/db_script.sh
+COPY ./conf/my.cnf /etc/my.cnf.d/
+COPY ./conf/wp_data.sql /tmp/wp_data.sql
+COPY ./tools/data-setup.sh /usr/local/bin/data-setup.sh
 
-RUN sed -i "s/127.0.0.1/0.0.0.0/" /etc/mysql/mariadb.conf.d/50-server.cnf 
+RUN chmod +x /usr/local/bin/data-setup.sh
+RUN mariadb-install-db --datadir=/var/lib/mysql --user=mysql \
+    --auth-root-authentication-method=normal
 
-ENTRYPOINT ["bash", "/tmp/db_script.sh"]
+EXPOSE 3306
 
-CMD ["mysqld_safe"]
+ENTRYPOINT ["data-setup.sh"]

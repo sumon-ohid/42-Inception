@@ -1,36 +1,34 @@
 FROM debian:bullseye
 
-# Install necessary packages
-RUN apt-get update && apt-get upgrade -y && apt-get install -y \
+RUN apt-get update && apt-get install -y \
     php-fpm \
     php-mysql \
-    php-zip \
-    php-redis \
     curl \
-    vim \
-    sendmail && \
-    sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf && \
-    mkdir -p /run/php
+    nano \
+    wget \
+    default-mysql-client \
+    && rm -rf /var/lib/apt/lists/*
 
-# Set working directory
+COPY ./conf/www.conf /etc/php/7.4/fpm/pool.d/
+
+RUN mkdir /run/php
+
 WORKDIR /var/www/html
 
-# Change ownership of the working directory
 RUN chown -R www-data:www-data /var/www/html
 
-# Install WP-CLI
+RUN sed -i -e 's/listen =.*/listen = 9000/g' /etc/php/7.4/fpm/pool.d/www.conf && \
+    service php7.4-fpm restart
+
 RUN curl -O https://raw.githubusercontent.com/wp-cli/builds/gh-pages/phar/wp-cli.phar && \
     chmod +x wp-cli.phar && \
     mv wp-cli.phar /usr/local/bin/wp
 
-# Download WordPress core files
-RUN wp core download --allow-root
+RUN wp core download --path=/var/www/html --allow-root
 
-# Copy the setup script
-COPY ./tools/wp_setup.sh /usr/local/bin/wp_setup.sh
+COPY ./tools/wp-setup.sh /usr/local/bin/wp-setup.sh
+RUN chmod +x /usr/local/bin/wp-setup.sh
 
-# Make the setup script executable
-RUN chmod +x /usr/local/bin/wp_setup.sh
+EXPOSE 9000
 
-# Set the entrypoint to the setup script
-ENTRYPOINT ["wp_setup.sh"]
+ENTRYPOINT ["wp-setup.sh"]

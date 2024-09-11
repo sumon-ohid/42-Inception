@@ -7,10 +7,13 @@ up:
 down:
 	docker-compose -f srcs/docker-compose.yml down --rmi all
 
+rm_images:
+	docker-compose -f srcs/docker-compose.yml --rmi all
+
 logs:
 	docker-compose -f srcs/docker-compose.yml logs nginx
 	docker-compose -f srcs/docker-compose.yml logs wordpress
-	docker-compose -f srcs/docker-compose.yml logs mariadb
+	#docker-compose -f srcs/docker-compose.yml logs mariadb
 
 restart:
 	docker-compose -f srcs/docker-compose.yml restart nginx wordpress mariadb
@@ -20,9 +23,13 @@ network_check:
 
 re: down build up
 
-.PHONY: build up down logs restart network_check remove_images re
+.PHONY: build up down logs restart network_check rm_images re
 
 
-# SSL
-# sudo mkdir -p /etc/nginx/ssl
-# sudo openssl req -x509 -nodes -days 365 -newkey rsa:2048 -keyout /etc/nginx/ssl/nginx.key -out /etc/nginx/ssl/nginx.crt
+# docker stop $(docker ps -a -q)
+# docker rm $(docker ps -a -q)
+# docker rmi $(docker images -q)
+# docker volume rm $(docker volume ls -q)
+
+# docker build -t my-nginx-image .
+# docker run -d -p 80:80 my-nginx-container my-nginx-image
