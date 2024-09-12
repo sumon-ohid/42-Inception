@@ -22,6 +22,15 @@ logs:
 restart:
 	${DOCKER_COMPOSE} restart nginx wordpress mariadb
 
+wp_shell:
+	${DOCKER_COMPOSE} exec -it wordpress sh 
+
+db_shell:
+	${DOCKER_COMPOSE} exec -it mariadb sh
+
+nginx_shell:
+	${DOCKER_COMPOSE} exec -it nginx sh
+
 clean:	down
 	sudo rm -rf ~/Desktop/DATA_BASE
 	${DOCKER_COMPOSE} down -v --rmi all --remove-orphans
