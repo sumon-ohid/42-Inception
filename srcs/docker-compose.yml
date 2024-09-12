@@ -1,0 +1,56 @@
+#Author: msumon
+
+services:
+  nginx:
+    container_name: nginx
+    build: ./requirements/nginx
+    ports:
+      - "443:443"
+    depends_on:
+      - wordpress
+    volumes:
+      - "~/Desktop/DATA_BASE/website:/var/www/html"
+    restart: always
+    networks:
+      - internal
+
+  wordpress:
+    container_name: wordpress
+    depends_on:
+      - mariadb
+    build: ./requirements/wordpress
+    volumes:
+      - "~/Desktop/DATA_BASE/website:/var/www/html"
+    networks:
+      - internal
+    restart: always
+    environment: 
+      SITE_URL: ${SITE_URL}
+      WP_TITLE: ${WP_TITLE}
+      WP_ADMIN_USER: ${WP_ADMIN_USER}
+      WP_ADMIN_PASS: ${WP_ADMIN_PASS}
+      WP_ADMIN_EMAIL: ${WP_ADMIN_EMAIL}
+      WP_USER: ${WP_USER}
+      WP_PASS: ${WP_PASS}
+      WP_EMAIL: ${WP_EMAIL}
+      DATABASE_HOST: ${DATABASE_HOST}
+      WP_DB_NAME: ${WP_DB_NAME}
+      WP_DB_USER: ${WP_DB_USER}
+      WP_DB_PASS: ${WP_DB_PASS}
+
+  mariadb:
+    container_name: mariadb
+    build: ./requirements/mariadb
+    volumes:
+      - "~/Desktop/DATA_BASE/mariadb:/var/lib/mysql"
+    networks:
+      - internal
+    restart: always
+    environment:
+      DATABASE_ROOT_PASS: ${DATABASE_ROOT_PASS}
+      WP_DB_NAME: ${WP_DB_NAME}
+      WP_DB_USER: ${WP_DB_USER}
+      WP_DB_PASS: ${WP_DB_PASS}
+
+networks:
+  internal:
