@@ -7,8 +7,8 @@ RUN rm -rf /var/cache/apk/*
 
 RUN mkdir /etc/nginx/ssl
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
-        -out /etc/nginx/ssl/sumon.pem \
-        -keyout /etc/nginx/ssl/sumon.key \
+        -out /etc/nginx/ssl/selfsigned-ssl.pem \
+        -keyout /etc/nginx/ssl/selfsigned-ssl.key \
         -subj "/C=AT/ST=Vienna/L=Vienna/O=42 School/OU=sumon/CN=sumon/"
 
 RUN mkdir -p /run/nginx

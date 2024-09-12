@@ -17,4 +17,6 @@ RUN cp wp-cli.phar /usr/bin/wp
 WORKDIR /var/www/html/wordpress
 
 COPY tools/wp-setup.sh /tmp/wp-setup.sh
+RUN chmod +x /tmp/wp-setup.sh
+
 ENTRYPOINT [ "sh", "/tmp/wp-setup.sh" ]
