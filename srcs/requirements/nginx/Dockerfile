@@ -3,6 +3,7 @@ FROM alpine:3.19
 RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache --quiet --update nginx openssl
+RUN rm -rf /var/cache/apk/*
 
 RUN mkdir /etc/nginx/ssl
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \

@@ -1,10 +1,11 @@
-FROM	alpine:3.19
+FROM alpine:3.19
 
-RUN		apk update
-RUN		apk upgrade
-RUN		apk add --no-cache --quiet --update curl bash vim
-RUN		apk add --no-cache --quiet --update mariadb-client
-RUN		apk add --no-cache --quiet --update php php-phar php-json php-curl php-fpm php-mysqli php-iconv
+RUN apk update
+RUN apk upgrade
+RUN apk add --no-cache --quiet --update curl bash vim
+RUN apk add --no-cache --quiet --update mariadb-client
+RUN apk add --no-cache --quiet --update php php-phar php-json php-curl php-fpm php-mysqli php-iconv
+RUN rm -rf /var/cache/apk/*
 
 RUN	adduser -S nginx &&	addgroup -S nginx
 COPY conf/www.conf /etc/php82/php-fpm.d/www.conf
