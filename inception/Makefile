@@ -1,45 +1,48 @@
-NAME			= inception
+DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
 
-DOCKER_COMPOSE	= docker-compose -f srcs/docker-compose.yml
+all: build up
 
-DOCKER			= docker
-
-all:			#unix
-				${DOCKER_COMPOSE} build
-				${DOCKER_COMPOSE} up -d
-
-# unix:
-# 				echo "127.0.0.1 sumon.42.fr" >> /etc/hosts
-# 				echo "127.0.0.1 www.sumon.42.fr" >> /etc/hosts
-
-ls:
-				${DOCKER} ps -a
-
-logs:
-				${DOCKER_COMPOSE} logs
-
-build: 
-				${DOCKER_COMPOSE} build
+build:
+	docker-compose -f srcs/docker-compose.yml build
 
 up:
-				${DOCKER_COMPOSE} up -d
-	
+	docker-compose -f srcs/docker-compose.yml up -d
+
 down:
-				${DOCKER_COMPOSE} down
+	docker-compose -f srcs/docker-compose.yml down --rmi all
 
-pause:
-				${DOCKER_COMPOSE} pause
+rm_images:
+	docker-compose -f srcs/docker-compose.yml --rmi all
 
-unpause:
-				${DOCKER_COMPOSE} unpause
+logs:
+	docker-compose -f srcs/docker-compose.yml logs nginx
+	docker-compose -f srcs/docker-compose.yml logs wordpress
+	#docker-compose -f srcs/docker-compose.yml logs mariadb
+
+restart:
+	docker-compose -f srcs/docker-compose.yml restart nginx wordpress mariadb
+
+network_check:
+	docker network inspect bridge
 
 clean:			down
-				rm -rf ~/Desktop/inception
+				sudo rm -rf ~/Desktop/inception
 				${DOCKER_COMPOSE} down -v --rmi all --remove-orphans
 
 fclean: 		clean
-				${DOCKER} system prune -f
+				docker system prune -f
 
 re:				fclean all
 
-.PHONY:			linux stop clean prune all build up
+re: clean fclean down build up
+
+.PHONY: build up down logs restart network_check rm_images re
+
+
+# docker stop $(docker ps -a -q)
+# docker rm $(docker ps -a -q)
+# docker rmi $(docker images -q)
+# docker volume rm $(docker volume ls -q)
+
+# docker build -t my-nginx-image .
+# docker run -d -p 80:80 my-nginx-container my-nginx-image
