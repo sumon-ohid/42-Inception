@@ -1,8 +1,8 @@
-FROM alpine:3.13
+FROM alpine:3.19
 
-RUN	apk update && apk upgrade && apk add --no-cache \
-        mariadb \
-        mariadb-client
+RUN apk update
+RUN apk upgrade
+RUN apk add --no-cache --quiet --update mariadb mariadb-client
         
 COPY tools/configure.sh /tmp/configure.sh
 

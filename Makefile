@@ -40,7 +40,7 @@ fclean: clean
 
 re:	fclean all
 
-.PHONY: build up down logs restart rm_images re
+.PHONY: build up down logs restart rm_images re fclean clean wp_shell db_shell nginx_shell
 
 
 # docker stop $(docker ps -a -q)

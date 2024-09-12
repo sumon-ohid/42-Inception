@@ -1,7 +1,8 @@
-FROM alpine:3.13
+FROM alpine:3.19
 
-RUN	apk update && apk upgrade && apk add --no-cache \
-        nginx openssl
+RUN apk update
+RUN apk upgrade
+RUN apk add --no-cache --quiet --update nginx openssl
 
 RUN mkdir /etc/nginx/ssl
 RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
@@ -10,6 +11,6 @@ RUN openssl req -newkey rsa:4096 -x509 -sha256 -days 365 -nodes \
         -subj "/C=AT/ST=Vienna/L=Vienna/O=42 School/OU=sumon/CN=sumon/"
 
 RUN mkdir -p /run/nginx
-COPY conf/nginx.conf /etc/nginx/conf.d/default.conf
+COPY conf/nginx.conf /etc/nginx/http.d/default.conf
 
 ENTRYPOINT ["nginx", "-g", "daemon off;"]

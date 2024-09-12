@@ -13,4 +13,4 @@ if [ ! -f "/var/www/html/index.html" ]; then
     wp plugin update --all 
 fi
 
-php-fpm7 --nodaemonize
+php-fpm82 --nodaemonize
