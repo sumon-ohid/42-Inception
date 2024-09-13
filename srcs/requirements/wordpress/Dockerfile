@@ -4,7 +4,7 @@ RUN apk update
 RUN apk upgrade
 RUN apk add --no-cache --quiet --update curl vim
 RUN apk add --no-cache --quiet --update mariadb-client
-RUN apk add --no-cache --quiet --update php php-phar php-curl php-fpm php-mysqli
+RUN apk add --no-cache --quiet --update php php-phar php-curl php-fpm php-mysqli php-iconv php-json
 RUN rm -rf /var/cache/apk/*
 
 RUN	adduser -S nginx &&	addgroup -S nginx
