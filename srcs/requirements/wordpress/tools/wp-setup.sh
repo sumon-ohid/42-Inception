@@ -8,7 +8,9 @@ echo -e "${BOLD}${GREEN}Waiting for database to be ready... ⏳⏳🙇⌛⏰${NC
 while ! mariadb -h$DATABASE_HOST -u$WP_DB_USER -p$WP_DB_PASS $WP_DB_NAME &>/dev/null; do
     sleep 3
 done
-echo -e "${BOLD}${GREEN}Database is ready! 🎉🎉🎉${NC}"
+if [ mariadb -h$DATABASE_HOST -u$WP_DB_USER -p$WP_DB_PASS $WP_DB_NAME ] &>/dev/null; then
+    echo -e "${BOLD}${GREEN}Database is ready! 🎉🎉🎉${NC}"
+fi
 
 echo -e "${BOLD}${GREEN}Checking if WordPress is already installed... 🕵️‍♂️🔍${NC}"
 if [ ! -f "/var/www/html/index.html" ]; then
@@ -24,10 +26,10 @@ if [ ! -f "/var/www/html/index.html" ]; then
    
     echo -e "${BOLD}${GREEN}Activating theme and plugins... 🛠️🔌🔧${NC}"
     wp theme install variations --activate
-    wp plugin update --all 
+    wp plugin update --all
     echo -e "${BOLD}${GREEN}Theme and plugins activated successfully! 🎉🎉🎉${NC}"
     echo -e "${BOLD}${GREEN}WordPress setup completed successfully! 🎉🎉🎉${NC}"
     echo "▄︻デ══━一💥"
 fi
 
-php-fpm82 --nodaemonize
+exec "$@"
