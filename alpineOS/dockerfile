@@ -1,0 +1,23 @@
+FROM alpine:3.19
+
+# Install necessary packages
+RUN apk update && apk add --no-cache \
+    zsh \
+    git \
+    curl \
+    wget \
+    nano \
+    tzdata \
+    && rm -rf /var/cache/apk/*
+
+# Install Oh My Zsh
+RUN sh -c "$(curl -fsSL https://raw.githubusercontent.com/ohmyzsh/ohmyzsh/master/tools/install.sh)" "" --unattended
+
+# Set Zsh as the default shell by modifying /etc/passwd
+RUN sed -i 's|/bin/ash|/bin/zsh|' /etc/passwd
+
+# Copy a custom .zshrc if you have one (optional)
+# COPY .zshrc /root/.zshrc
+
+# Keep the container running
+CMD ["zsh"]

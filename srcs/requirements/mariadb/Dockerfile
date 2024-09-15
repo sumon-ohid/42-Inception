@@ -11,7 +11,7 @@ RUN chmod 777 /run/mysqld
 RUN mkdir -p /var/lib/mysql
 RUN chown -R mysql:mysql /var/lib/mysql
 
-COPY tools/db-setup.sh /tmp/db-setup.sh
-RUN chmod +x /tmp/db-setup.sh
+COPY tools/db-setup.sh /home/db-setup.sh
+RUN chmod +x /home/db-setup.sh
 
-ENTRYPOINT ["sh", "/tmp/db-setup.sh"]
+ENTRYPOINT ["sh", "/home/db-setup.sh"]
