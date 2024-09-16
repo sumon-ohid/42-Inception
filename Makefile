@@ -32,7 +32,6 @@ nginx_shell:
 	${DOCKER_COMPOSE} exec -it nginx sh
 
 clean:	down
-	sudo rm -rf ~/Desktop/DATA_BASE
 	${DOCKER_COMPOSE} down -v --rmi all --remove-orphans
 
 fclean: clean
@@ -50,3 +49,6 @@ re:	fclean all
 
 # docker build -t my-nginx-image .
 # docker run -d -p 80:80 my-nginx-container my-nginx-image
+
+# echo "127.0.0.1 msumon.42.fr" | sudo tee -a /etc/hosts
+# echo "127.0.0.1 www.msumon.42.fr" | sudo tee -a /etc/hosts
