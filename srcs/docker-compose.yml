@@ -1,5 +1,3 @@
-#Author: msumon
-
 services:
   nginx:
     container_name: nginx
@@ -9,10 +7,12 @@ services:
     depends_on:
       - wordpress
     volumes:
-      - "~/.data_inception/website:/var/www/html"
+      - "wordpress:/var/www/html"
     restart: on-failure
     networks:
       - internal
+    environment:
+      USERNAME: ${USERNAME}
 
   wordpress:
     container_name: wordpress
@@ -20,7 +20,7 @@ services:
       - mariadb
     build: ./requirements/wordpress
     volumes:
-      - "~/.data_inception/website:/var/www/html"
+      - "wordpress:/var/www/html"
     networks:
       - internal
     restart: on-failure
@@ -42,7 +42,7 @@ services:
     container_name: mariadb
     build: ./requirements/mariadb
     volumes:
-      - "~/.data_inception/mariadb:/var/lib/mysql"
+      - "mariadb:/var/lib/mysql"
     networks:
       - internal
     restart: on-failure
@@ -54,3 +54,18 @@ services:
 
 networks:
   internal:
+
+# need to change it before submitting
+volumes:
+  wordpress:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/sumon/data/wordpress
+      o: bind
+  mariadb:
+    driver: local
+    driver_opts:
+      type: none
+      device: /Users/sumon/data/mariadb
+      o: bind

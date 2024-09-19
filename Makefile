@@ -1,11 +1,18 @@
 DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
+DATA_DIR = /Users/sumon/data
+WORDPRESS_DIR = ${DATA_DIR}/wordpress
+MARIADB_DIR = ${DATA_DIR}/mariadb
 
-all: build up
+all: create_dirs build up
 
-build:
+create_dirs:
+	@mkdir -p ${WORDPRESS_DIR}
+	@mkdir -p ${MARIADB_DIR}
+
+build: create_dirs
 	${DOCKER_COMPOSE} build
 
-up:
+up: create_dirs
 	${DOCKER_COMPOSE} up -d
 
 down:
@@ -31,16 +38,15 @@ db_shell:
 nginx_shell:
 	${DOCKER_COMPOSE} exec -it nginx sh
 
-clean:	down
+clean: down
 	${DOCKER_COMPOSE} down -v --rmi all --remove-orphans
 
 fclean: clean
 	docker system prune -f
 
-re:	fclean all
+re: fclean all
 
-.PHONY: build up down logs restart rm_images re fclean clean wp_shell db_shell nginx_shell
-
+.PHONY: build up down logs restart rm_images re fclean clean wp_shell db_shell nginx_shell create_dirs
 
 # docker stop $(docker ps -a -q)
 # docker rm $(docker ps -a -q)
