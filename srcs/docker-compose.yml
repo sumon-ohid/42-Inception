@@ -55,17 +55,16 @@ services:
 networks:
   internal:
 
-# need to change it before submitting
 volumes:
   wordpress:
     driver: local
     driver_opts:
       type: none
-      device: /Users/sumon/data/wordpress
+      device: /home/${USERNAME}/data/wordpress
       o: bind
   mariadb:
     driver: local
     driver_opts:
       type: none
-      device: /Users/sumon/data/mariadb
+      device: /home/${USERNAME}/data/mariadb
       o: bind

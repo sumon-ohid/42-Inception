@@ -1,5 +1,5 @@
 DOCKER_COMPOSE = docker-compose -f srcs/docker-compose.yml
-DATA_DIR = /Users/sumon/data
+DATA_DIR = /home/msumon/data
 WORDPRESS_DIR = ${DATA_DIR}/wordpress
 MARIADB_DIR = ${DATA_DIR}/mariadb
 
@@ -58,3 +58,4 @@ re: fclean all
 
 # echo "127.0.0.1 msumon.42.fr" | sudo tee -a /etc/hosts
 # echo "127.0.0.1 www.msumon.42.fr" | sudo tee -a /etc/hosts
+# sudo ss -tuln
