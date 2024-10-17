@@ -6,10 +6,10 @@ docker_volume_rm = docker volume ls
 all: build run
 
 build: 
-	docker build -t alpineos .
+	docker build -t ubuntu .
 
 run:
-	docker run -it -p 9000:9000 alpineos
+	docker run -it -p 9000:9000 ubuntu
 	
 fclean:
 	docker system prune -f
