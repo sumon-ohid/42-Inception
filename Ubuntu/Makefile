@@ -9,7 +9,7 @@ build:
 	docker build -t alpineos .
 
 run:
-	docker run -it alpineos
+	docker run -it -p 9000:9000 alpineos
 	
 fclean:
 	docker system prune -f
